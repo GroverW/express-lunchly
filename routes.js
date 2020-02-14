@@ -18,6 +18,26 @@ router.get("/", async function(req, res, next) {
   }
 });
 
+/** Homepage: search for customers. */
+router.post("/", async function(req, res, next) {
+  try {
+    console.log("AM I HERE?")
+    const customers = await Customer.search(req.body.search);
+    return res.render("customer_list.html", { customers });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/top-ten", async function (req, res, next) {
+  try {
+    const customers = await Customer.topTen();
+    return res.render("customer_list.html", { customers });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /** Form to add a new customer. */
 
 router.get("/add/", async function(req, res, next) {
@@ -50,8 +70,10 @@ router.post("/add/", async function(req, res, next) {
 
 router.get("/:id/", async function(req, res, next) {
   try {
-    const customer = await Customer.get(req.params.id);
 
+    debugger;
+    const customer = await Customer.get(req.params.id);
+    
     const reservations = await customer.getReservations();
 
     return res.render("customer_detail.html", { customer, reservations });
